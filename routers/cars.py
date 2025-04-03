@@ -85,7 +85,7 @@ async def add_car_with_image(
 async def list_cars(
         request: Request,
         page: int = 1,
-        limit: int = CARS_PER_PAGE
+        limit: int = 10
 
 ):
     cars = request.app.db['cars']
