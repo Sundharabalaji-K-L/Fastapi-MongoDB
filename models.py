@@ -57,7 +57,7 @@ class UpdateCarModel(BaseModel):
 
 
 class CarCollectionPagination(CarCollection):
-    page: int = Field(gt=1, default=1)
+    page: int = Field(ge=1, default=1)
     has_more: bool
 
 
