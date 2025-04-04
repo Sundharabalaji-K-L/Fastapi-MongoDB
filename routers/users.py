@@ -9,28 +9,25 @@ from models import CurrentUserModel, LoginModel, UserModel
 router = APIRouter()
 auth_handler = AuthHandler()
 
-@router.post('/register', response_description="user register")
-async def register(
-        request: Request,
-        newUser: LoginModel = Body(...)
-):
+@router.post('/register', response_description='Register user')
+async def register(request: Request, newUser: LoginModel = Body(...)) -> UserModel:
     users = request.app.db['users']
 
     newUser.password = auth_handler.get_password(newUser.password)
     newUser = newUser.model_dump()
 
-
     if(
-        existing_user := await users.find_one({'username': newUser['username']})
+        existing_username := await users.find_one(
+            {'username': newUser['username']}
+        )
         is not None
     ):
         raise HTTPException(
             status_code=409,
-            detail = f"user with username {newUser['username']} already exists"
-
+            detail=f"User with username {newUser['username']} already exists."
         )
 
-    new_user = await  users.insert_one(newUser)
+    new_user = await users.insert_one(newUser)
     created_user = await users.find_one({'_id': new_user.inserted_id})
 
     return created_user
